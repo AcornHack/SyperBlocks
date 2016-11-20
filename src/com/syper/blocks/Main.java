@@ -109,6 +109,8 @@ public class Main extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception {
+        primaryStage.setTitle("Syper Blocks");
+
         root = new XForm();
         blocks = new XForm();
         root.getChildren().add(blocks);
