@@ -1,5 +1,7 @@
 package com.syper.blocks;
 
+import com.mrbbot.json.JSON;
+import com.mrbbot.json.JSONArray;
 import javafx.application.Application;
 import javafx.scene.*;
 import javafx.scene.paint.Color;
@@ -9,16 +11,21 @@ import javafx.scene.transform.Rotate;
 import javafx.scene.transform.Translate;
 import javafx.stage.Stage;
 
+import java.io.File;
 import java.util.Random;
 
 public class Main extends Application {
     private Random random = new Random();
 
     private XForm root;
+    private XForm blocks;
 
     private Camera camera;
     private Translate cameraTranslate;
     private Rotate cameraRotateX, cameraRotateY, cameraRotateZ;
+
+    private String[] shapes = new String[] {"strange", "small", "full"};
+    private int shapeIndex = 0;
 
     private void setupCamera() {
         camera = new PerspectiveCamera(true);
@@ -43,43 +50,68 @@ public class Main extends Application {
         cameraRootX.getChildren().add(cameraRoot);
         cameraRoot.getChildren().add(camera);
 
-        camera.getTransforms().add(new Rotate(180, Rotate.Z_AXIS));
+        //camera.getTransforms().add(new Rotate(180, Rotate.Z_AXIS));
     }
 
-    private void addBox(int x, int y, int z) {
+    private void addBox(double x, double y, double z) {
         double r = random.nextDouble();
         double g = random.nextDouble();
         double b = random.nextDouble();
         addBox(x, y, z, new Color(r, g, b, 1));
     }
 
-    private void addBox(int x, int y, int z, Color color) {
+    private void addBox(double x, double y, double z, Color color) {
         Box box = new Box(1, 1, 1);
         box.setMaterial(new PhongMaterial(color));
         box.getTransforms().add(new Translate(x, y, z));
-        root.getChildren().add(box);
+        blocks.getChildren().add(box);
     }
 
-    private void addContent() {
-        /*addBox(0, 0, 0, Color.GRAY);
+    private void addBlocks() {
+        blocks.getChildren().clear();
 
-        addBox(1, 0, 0, Color.RED);
-        addBox(0, 1, 0, Color.GREEN);
-        addBox(0, 0, 1, Color.BLUE);*/
+        JSONArray json = JSON.parseArray(new File("blocks" + File.separator + shapes[shapeIndex] + ".json"));
+        int zMax = json.size();
+        double zStart = 0.0 - ((((double) zMax) - 1.0) / 2.0);
+
+        for(int z = 0; z < zMax; z++) {
+            JSONArray face = json.getArray(z);
+            int yMax = face.size();
+            double yStart = 0.0 - ((((double) yMax) - 1.0) / 2.0);
+
+            for(int y = 0; y < yMax; y++) {
+                JSONArray row = face.getArray(y);
+                int xMax = row.size();
+                double xStart = 0.0 - ((((double) xMax) - 1.0) / 2.0);
+
+                for(int x = 0; x < xMax; x++) {
+                    int value = row.getInt(x);
+
+                    if (value == 1) {
+                        addBox(xStart + x, yStart + y, zStart + z);
+                    }
+                }
+            }
+        }
     }
 
     private void setup() {
         setupCamera();
-        cameraRotateX.setAngle(30);
-        cameraRotateY.setAngle(-135);
-        cameraTranslate.setZ(-20);
+        reset();
+    }
 
-        addContent();
+    private void reset() {
+        cameraRotateX.setAngle(-25);
+        cameraRotateY.setAngle(-45);
+        cameraTranslate.setZ(-20);
+        addBlocks();
     }
 
     @Override
     public void start(Stage primaryStage) throws Exception {
         root = new XForm();
+        blocks = new XForm();
+        root.getChildren().add(blocks);
 
         setup();
 
@@ -97,6 +129,21 @@ public class Main extends Application {
                     break;
                 case RIGHT:
                     cameraRotateY.setAngle(cameraRotateY.getAngle() + 2);
+                    break;
+                case A:
+                    shapeIndex--;
+                    if(shapeIndex < 0)
+                        shapeIndex = shapes.length - 1;
+                    reset();
+                    break;
+                case D:
+                    shapeIndex++;
+                    if(shapeIndex > shapes.length - 1)
+                        shapeIndex = 0;
+                    reset();
+                    break;
+                case R:
+                    reset();
                     break;
             }
         });
