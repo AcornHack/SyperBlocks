@@ -103,7 +103,7 @@ public class Main extends Application {
     private void reset() {
         cameraRotateX.setAngle(-25);
         cameraRotateY.setAngle(-45);
-        cameraTranslate.setZ(-20);
+        cameraTranslate.setZ(-15);
         addBlocks();
     }
 
@@ -127,10 +127,16 @@ public class Main extends Application {
         scene.setOnKeyPressed((e) -> {
             switch(e.getCode()) {
                 case LEFT:
-                    cameraRotateY.setAngle(cameraRotateY.getAngle() - 2);
+                    cameraRotateY.setAngle(cameraRotateY.getAngle() - 5);
                     break;
                 case RIGHT:
-                    cameraRotateY.setAngle(cameraRotateY.getAngle() + 2);
+                    cameraRotateY.setAngle(cameraRotateY.getAngle() + 5);
+                    break;
+                case UP:
+                    cameraRotateX.setAngle(cameraRotateX.getAngle() - 5);
+                    break;
+                case DOWN:
+                    cameraRotateX.setAngle(cameraRotateX.getAngle() + 5);
                     break;
                 case A:
                     shapeIndex--;
@@ -153,7 +159,6 @@ public class Main extends Application {
         primaryStage.setScene(scene);
         primaryStage.show();
     }
-
 
     public static void main(String[] args) {
         launch(args);
