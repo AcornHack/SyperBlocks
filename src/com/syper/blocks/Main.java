@@ -61,11 +61,11 @@ public class Main extends Application {
     }
 
     private void addContent() {
-        addBox(0, 0, 0, Color.GRAY);
+        /*addBox(0, 0, 0, Color.GRAY);
 
         addBox(1, 0, 0, Color.RED);
         addBox(0, 1, 0, Color.GREEN);
-        addBox(0, 0, 1, Color.BLUE);
+        addBox(0, 0, 1, Color.BLUE);*/
     }
 
     private void setup() {
